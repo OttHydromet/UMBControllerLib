@@ -20,23 +20,6 @@
 
 [6 Notes on Firmware Update - 9 -](#notes-on-firmware-update)
 
-# Change History {#change-history .list-paragraph}
-
-+-------+------------+------------------------------------------------+
-| Ve    | Datum      | Änderungen                                     |
-| rsion |            |                                                |
-+=======+============+================================================+
-| V0.1  | 12.03.2021 | Initial Version                                |
-+-------+------------+------------------------------------------------+
-| V0.2  | 22.03.2021 | Screenshots adjusted                           |
-|       |            |                                                |
-|       |            | Explanations to UMB Specification              |
-+-------+------------+------------------------------------------------+
-| V0.3  | 19.04.2021 | 64-bit versions of the library                 |
-+-------+------------+------------------------------------------------+
-| V0.4  | 06.05.2021 | 64-bit version for ARM                         |
-+-------+------------+------------------------------------------------+
-
 # The UMB Protocol
 
 The UMB protocol is an open binary protocol specified by the Lufft
@@ -50,44 +33,50 @@ detailed description of all commands.
 # The UMB Library
 
 The functions specified in the UMB protocol are implemented in the UMB
-library.
+library. The library is written in the C language and is available for Windows
+and Linux. It does not use dynamic memory allocation.
 
-The library is written in the C language and is available for Windows
-and Linux.
+The commands of the UMB protocol listed in Table 1 are implemented in the library.
 
-It does not use dynamic memory allocation.
+|  <cmd> |  Description                       |     Library V0.4 |
+| ------ | ---------------------------------- | ---------------- |
+|  20h   |  Hardware and software version     |                  |
+|  21h   |  Read out EEPROM                   |     x            |
+|  22h   |  Write EEPROM                      |     x            |
+|  23h   |  Online data request               |                  |
+|  24h   |  Reset / default                   |     x            |
+|  26h   |  Status request                    |     x            |
+|  27h   |  Set time / date                   |                  |
+|  28h   |  Read out time / date              |                  |
+|  2Bh   |  Protocol change                   |                  |
+|  2Ch   |  Last fault message                |                  |
+|  2Dh   |  Device information                |     x            |
+|  2Eh   |  Reset with delay                  |                  |
+|  2Fh   |  Multi-channel online data request |     x            |
+|  30h   |  Set new device ID temporarily     |                  |
+|  36h   |  UMB-Tunnel                        |                  |
+|  37h   |  Transfer Firmware                 |     x            |
+|  38h   |  Transfer Binary Data              |                  |
 
 # Scope of Delivery
 
 The folder \"**lufft**\" contains all files that are required to use the
 UMB library:
-
 -   Software libraries for Windows and Linux / Linux on ARM
 
-  -------------------------------------------------------------------------------------
-           **windows**               **linux**               **Linux / ARM**
-  -------- ------------------------- ----------------------- --------------------------
-  **64     UmbControllerLib.lib      libUmbController.a      libUmbControllerArm_64.a
-  bit**                                                      
+|        | windows                      | linux                      | linux/ARM                |
+| ------ | ---------------------------- | -------------------------- | ------------------------ |
+| 64 bit | UmbControllerLib.lib         | libUmbController.a         | libUmbControllerArm_64.a |
+| 32 bit | UmbControllerLib_32.lib      | libUmbController_32.a      | libUmbControllerArm_32.a |
 
-  **32     UmbControllerLib_32.lib   libUmbController_32.a   libUmbControllerArm_32.a
-  bit**                                                      
-  -------------------------------------------------------------------------------------
+The header files to use the library: 
+* UmbControllerLib.h: Interface of the library 
+* Umb_Types.h: General type definitions
 
--   The header files to use the library:
-
-> **UmbControllerLib.h**: Interface of the library
->
-> **Umb_Types.h**: General type definitions
-
-In the "**src**" folder you will find files with examples for connecting
-the library to your own system:
-
--   **UmbCtrlTest.cpp**: Test program to illustrate how it works
-
--   **ComWin.c/.h**: Example implementation for connection under Windows
-
--   **ComLinux.c/.h**: Example implementation for connection under Linux
+In the “src” folder you will find files with examples for connecting the library to your own system:
+* UmbCtrlTest.cpp: Test program to illustrate how it works
+* ComWin.c/.h: Example implementation for connection under Windows
+* ComLinux.c/.h: Example implementation for connection under Linux
 
 The \"**win**\" folder contains non-Lufft files that are used in the
 test program or in the example implementations under Windows. The terms
