@@ -29,4 +29,4 @@ This product contains software that may incorporate various publicly available s
 | Component           | License                            | Available at                                       |
 | ------------------- | ---------------------------------- | ---------------------------------------------------|
 | pthread             | GNU Lesser General Public License  | POSIX Threads (pthreads) for Win32 (sourceware.org)|
-| SerialPort.cpp / .h |                                    | http://www.naughter.com/serialport. html           |
+| SerialPort.cpp / .h |                                    | http://www.naughter.com/serialport.html           |
