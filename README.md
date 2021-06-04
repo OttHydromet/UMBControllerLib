@@ -1,24 +1,6 @@
+
 # Content {#content .TOC-Heading}
-
-[Change History - 2 -](#_Toc71192989)
-
-[1 The UMB Protocol - 3 -](#_Toc71192990)
-
-[2 The UMB Library - 3 -](#the-umb-library)
-
-[3 Scope of Delivery - 3 -](#scope-of-delivery)
-
-[4 Commissioning - 4 -](#commissioning)
-
-[5 Usage - 4 -](#usage)
-
-[5.1 System Connection - 4 -](#system-connection)
-
-[5.2 Initialization - 7 -](#initialization)
-
-[5.3 Test Programm - 8 -](#test-programm)
-
-[6 Notes on Firmware Update - 9 -](#notes-on-firmware-update)
+[[toc]]
 
 # The UMB Protocol
 
@@ -106,11 +88,27 @@ interface file UmbControllerLib.h.
 The serial interface is controlled via function pointers that are
 defined in the UMB_CTRL_COM_FUNCTION_T structure, see Figure 1.
 
-![](media/image2.png){width="6.299305555555556in"
-height="2.7354166666666666in"}
+~~~
+//! callback functions for communication
+typedef struct
+{
+	void* pUserHandle;
 
-Figure 1 Structure with function pointers for controlling the serial
-interface
+	Std_ReturnType(*pfnInit)	(void* pUserHandle);
+	Std_ReturnType(*pfnDeinit)	(void* pUserHandle);
+	Std_ReturnType(*pfnUse)		(void* pUserHandle);
+	Std_ReturnType(*pfnUnuse)	(void* pUserHandle);
+
+	Std_ReturnType(*pfnTx)		(void* pUserHandle, const uint32 length, const uint8* const pBytes);
+
+	Std_ReturnType(*pfnRxAvail)	(void* pUserHandle, uint32* const pAvail);
+	Std_ReturnType(*pfnRx)		(void* pUserHandle, const sint32 timeoutMs, const uint32 maxLen, uint32* const pLength, uint8* const pBytes);
+	Std_ReturnType(*pfnRxClearBuf)(void* pUserHandle);
+
+} UMB_CTRL_COM_FUNCTION_T;
+~~~
+*Figure 1 Structure with function pointers for controlling the serial
+interface*
 
 The function pointers (\*pfnInit) and (\*pfnDeinit) are optional and
 e.g. can be used to open or close the serial interface. However, if this
@@ -131,15 +129,45 @@ a data record, which means that this data is then available in the
 callback functions. Figure 2 shows the initialization of a
 \*pUserHandle, Figure 3 the subsequent application.
 
-![](media/image3.png){width="6.299305555555556in"
-height="1.8680555555555556in"}
+~~~
+UMB_CTRL_COM_FUNCTION_T* ComFunctionInit(COM_CONFIG_T* pConfig)
+{
+    UMB_CTRL_COM_FUNCTION_T* pComFunction = (UMB_CTRL_COM_FUNCTION_T*)malloc(sizeof(UMB_CTRL_COM_FUNCTION_T));
 
-Figure 2 Initialization of a \*pUserHandle
+    if (pComFunction)
+    {
+        pComFunction->pUserHandle = malloc(sizeof(COM_HANDLE_T));
 
-![](media/image4.png){width="6.100528215223097in"
-height="2.8085772090988628in"}
+        if (pComFunction->pUserHandle)
+        {
+            COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pComFunction->pUserHandle;
 
-Figure 3 Usage of a \*pUserHandle
+            pComHandle->config = *pConfig;
+            memset(&pComHandle->port, 0, sizeof(pComHandle->port));
+        }
+~~~
+*Figure 2 Initialization of a \*pUserHandle*
+~~~
+static Std_ReturnType ComInit(void* pUserHandle)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
+
+    try
+    {
+        int number = std::strtoul(pComHandle->config.serialIf, NULL, 10);
+        pComHandle->port.Open(number, pComHandle->config.baudrate, CSerialPort::NoParity, 8, CSerialPort::OneStopBit, CSerialPort::NoFlowControl);
+    }
+    catch (CSerialException& e)
+    {
+        printf("Unexpected CSerialPort exception, Error:%u\n", e.m_dwError);
+        //UNREFERENCED_PARAMETER(e);
+        return E_NOT_OK;
+    }
+
+    return E_OK;
+}
+~~~
+*Figure 3 Usage of a \*pUserHandle*
 
 The modules ComLinux.cpp/.h and ComWin.cpp/.h show examples of how the
 assignment of these function pointers can be implemented:
@@ -149,45 +177,171 @@ whereas ComWin uses third-party software (SerialPort.h) for which only
 the wrapper functions compatible with the UMB library are provided, see
 also Figure 4.
 
-![](media/image5.png){width="10.90625in" height="4.697916666666667in"}
+~~~
+static Std_ReturnType ComTx(void* pUserHandle, const uint32 length, const uint8* const bytes)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
 
-Figure 4 Implementation examples for controlling the serial interface:\
-left: Example for Linux, manual implementation\
-right: Example for Windows, Usage of already existing implementation
+    pComHandle->port.Write(bytes, length);
+
+    return E_OK;
+}
+
+static Std_ReturnType ComRxAvail(void* pUserHandle, uint32* const pAvail)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
+
+    *pAvail = pComHandle->port.BytesWaiting();
+
+    return E_OK;
+}
+
+static Std_ReturnType ComRx(void* pUserHandle, const sint32 timeoutMs, const uint32 maxLen, uint32* const pLength, uint8* const pBytes)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
+    COMMTIMEOUTS timeouts;
+
+    pComHandle->port.GetTimeouts(timeouts);
+    timeouts.ReadIntervalTimeout = MAXDWORD;
+    timeouts.ReadTotalTimeoutMultiplier = MAXDWORD;
+    timeouts.ReadTotalTimeoutConstant = timeoutMs;
+    pComHandle->port.SetTimeouts(timeouts);
+
+    *pLength = pComHandle->port.Read(pBytes, maxLen);
+
+    return E_OK;
+}
+~~~
+*Figure 4a Implementation examples for controlling the serial interface on Windows*
+
+~~~
+static Std_ReturnType ComTx(void* pUserHandle, const uint32 length, const uint8* const bytes)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
+
+    if (write(pComHandle->m_fdTTY, bytes, length) > 0)
+    {
+        return E_OK;
+    }
+
+    return E_NOT_OK;
+}
+
+static Std_ReturnType ComRxAvail(void* pUserHandle, uint32* const pAvail)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
+
+    int bytesAvail;
+    ioctl(pComHandle->m_fdTTY, FIONREAD, &bytesAvail);
+    *pAvail = (uint32)bytesAvail;
+
+    return E_OK;
+}
+
+static Std_ReturnType ComRx(void* pUserHandle, const sint32 timeoutMs, const uint32 maxLen, uint32* const pLength, uint8* const pBytes)
+{
+    COM_HANDLE_T* pComHandle = (COM_HANDLE_T*)pUserHandle;
+    int retval;
+	fd_set set;
+	struct timeval timeout;
+
+	if((pComHandle->m_fdTTY < 0) || (pLength == nullptr) || (pBytes == nullptr))
+	{
+		return E_NOT_OK;
+	}
+
+	FD_ZERO(&set);
+	FD_SET(pComHandle->m_fdTTY, &set);
+
+	timeout.tv_sec = timeoutMs / 1000;
+	timeout.tv_usec = (timeoutMs % 1000) * 1000;
+
+	retval = select(pComHandle->m_fdTTY + 1, &set, NULL, NULL, &timeout);
+	if(retval > 0)
+	{
+		retval = read(pComHandle->m_fdTTY, pBytes, maxLen);
+		if(retval > 0)
+		{
+			*pLength = retval;
+			return E_OK;
+		}
+	}
+
+	return E_NOT_OK;
+}
+~~~
+*Figure 4b  Implementation examples for controlling the serial interface on Linux*
+
 
 ## Initialization
 
 The initialization of the UMB library comprises 3 points:
 
--   Allocation of the function pointers to control the serial interface
+- Allocation of the function pointers to control the serial interface <br> For the sake of clarity, it is best to assign the required function pointers in a separate function defined by the user, see section 5.1.
 
-> For the sake of clarity, it is best to assign the required function
-> pointers in a separate function defined by the user, see section 5.1.
+- Provision of the handle The UMB library does not use dynamic memory allocation. <br> Therefore, the user must provide the memory for the library instances used. This handle is required when calling all other functions of the UMB library.
 
--   Provision of the handle
-
-> The UMB library does not use dynamic memory allocation. Therefore, the
-> user must provide the memory for the library instances used.
->
-> This handle is required when calling all other functions of the UMB
-> library.
-
--   Calling the initialization function of the library
-
-> The handle and the variable that contains the function pointers, must
-> be given to the initialization function UmbCtrl_Init().
+- Calling the initialization function of the library <br>The handle and the variable that contains the function pointers, must be given to the initialization function UmbCtrl_Init().
 
 Figure 5 shows an example of the initialization sequence, Figure 6 a
 query of the device name and the device status.
+~~~
+int main(int argc, char* argv[])
+{
+    UMB_CTRL_STATUS_T status;
+    UMB_CTRL_T *pUmbCtrl;
 
-![](media/image6.png){width="5.358798118985127in"
-height="3.550307305336833in"}
+    // UMB lib version
+    UMB_CTRL_VERSION_T version = UmbCtrl_GetVersion();
+    printf("UMB Lib Version: major=%d, minor=%d\n", version.major, version.minor);
 
-Figure 5 Initialization of the UMB library
+    // Initialization
+    // TODO: Adjust to used serial interface
+    char serialIf[] = { "1" };
+    COM_CONFIG_T comConfig;
+    UMB_CTRL_COM_FUNCTION_T * pUmbCtrlComFunction;
 
-![](media/image7.png){width="4.6670713035870515in"
-height="4.633734689413823in"}
+    // TODO: Adjust to used baudrate
+    comConfig.baudrate = 19200;
+    comConfig.serialIf = serialIf;
+    pUmbCtrlComFunction = ComFunctionInit(&comConfig);
 
+    pUmbCtrl = malloc(UmbCtrl_GetHandleSize());
+    status = UmbCtrl_Init(pUmbCtrl, pUmbCtrlComFunction, 0);
+~~~
+*Figure 5 Initialization of the UMB library*
+
+~~~
+// Further processing
+UMB_ADDRESS_T umbAddress;
+// TODO: Adjust to used class id / device id
+umbAddress.deviceId = 0x01; // device id: 1
+umbAddress.classId = 0x70;  // class id: 7 = weather station
+
+uint8 name[41] = { 0 };
+status = UmbCtrl_GetDevName(pUmbCtrl, umbAddress, name);
+if (status.global == UMB_CTRL_STATUS_OK)
+{
+    printf("Device name: %s\n", name);
+}
+else
+{
+    printf("ERROR [request device name]: lib=0x%0X dev=0x%0X\n", 
+        status.detail.library, status.detail.device);
+}
+
+ERROR_STATUS_T deviceStatus;
+status = UmbCtrl_GetDevStatus(pUmbCtrl, umbAddress, &deviceStatus);
+if (status.global == UMB_CTRL_STATUS_OK)
+{
+    printf("Device status: %d\n", deviceStatus);
+}
+else
+{
+    printf("ERROR [request device status]: lib=0x%0X dev=0x%0X\n",
+        status.detail.library, status.detail.device);
+}
+~~~
 Figure 6 Query of device name and device status
 
 ## Test Programm
@@ -199,44 +353,32 @@ system. These are
 
 -   Preprocessor definition \_USE_NCURSES, in order to be able to use
     the graphical progress display for the update function under Linux
-    (for more details see below)
+    (for more details see below) <br> `#define \_USE_NCURSES`
 
-> #define \_USE_NCURSES
+-   Used serial interface, e. g. `char serialIf[] = { "3" };` <br> Note: Under Linux, the entire path of the serial interface must be specified here, e.g. `char serialIf[] = { "/dev/tty03" };`
 
--   Used serial interface, e. g.
+-   Baud rate of the serial interface, e. g. `comConfig.baudrate = 19200;`
+-   UMB address of the UMB device to be used for communication, e.g. `umbAddress.deviceId = 0x01; // device id: 1` <br>
+`umbAddress.classId = 0x70; // class id: 7 = weather station`
 
-> char serialIf\[\] = { \"3\" };
->
-> Note:
->
-> Under Linux, the entire path of the serial interface must be specified
-> here, e.g.
->
-> char serialIf\[\] = { \"/dev/tty03\" };
-
--   Baud rate of the serial interface, e. g.
-
-> comConfig.baudrate = 19200;
-
--   UMB address of the UMB device to be used for communication, e.g.
-
-> umbAddress.deviceId = 0x01; // device id: 1
->
-> umbAddress.classId = 0x70; // class id: 7 = weather station
-
--   Path and name of the firmware file, e.g.
-
-> char fileName\[\] = {
-> \"C:\\\\Projekte\\\\UmbController\\\\WS100_update.bin\" };
+-   Path and name of the firmware file, e.g. `char fileName[] = {
+"C:\\Projekte\\UmbController\\WS100_update.bin"};`
 
 The functions that have been commented out (see Figure 7) are best
 transferred into the test program individually and as required in order
 to become familiar with the respective functionality.
 
-![](media/image8.png){width="2.9419214785651793in"
-height="1.3167804024496939in"}
+~~~
+//writeMemory(pUmbCtrl, umbAddress);
+//getChannelInfo(pUmbCtrl, umbAddress);
+//getChannelData(pUmbCtrl, umbAddress);
+//firmwareUpdate(pUmbCtrl, umbAddress);
 
-Figure 7 Example functions for using the UMB library
+// deinitialization
+UmbCtrl_Deinit(pUmbCtrl);
+~~~
+ 
+*Figure 7 Example functions for using the UMB library*
 
 **About the preprocessor definition_USE_NCURSES**
 
