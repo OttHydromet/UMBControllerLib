@@ -1,5 +1,5 @@
 
-# Content {#content .TOC-Heading}
+# Content
 [[toc]]
 
 # The UMB Protocol
