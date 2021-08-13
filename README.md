@@ -1,26 +1,26 @@
-# Inhalt
+# Content
 
-[Änderungshistorie - 2 -](#_Toc72400214)
+[Change History - 2 -](#_Toc72400209)
 
-[1 Das UMB Protokoll - 3 -](#_Toc72400215)
+[1 The UMB Protocol - 3 -](#_Toc72400210)
 
-[2 Die UMB Bibliothek - 3 -](#die-umb-bibliothek)
+[2 The UMB Library - 3 -](#the-umb-library)
 
-[3 Lieferumfang - 4 -](#lieferumfang)
+[3 Scope of Delivery - 4 -](#scope-of-delivery)
 
-[4 Inbetriebnahme - 5 -](#inbetriebnahme)
+[4 Commissioning - 5 -](#commissioning)
 
-[5 Verwendung - 5 -](#verwendung)
+[5 Usage - 5 -](#usage)
 
-[5.1 System-Anbindung - 5 -](#system-anbindung)
+[5.1 System Connection - 5 -](#system-connection)
 
-[5.2 Initialisierung - 8 -](#initialisierung)
+[5.2 Initialization - 8 -](#initialization)
 
-[5.3 Testprogramm - 9 -](#testprogramm)
+[5.3 Test Programm - 9 -](#test-programm)
 
-[6 Hinweise zum Firmware-Update - 10 -](#hinweise-zum-firmware-update)
+[6 Notes on Firmware Update - 10 -](#notes-on-firmware-update)
 
-# Änderungshistorie
+# Change History
 
 <table>
 <colgroup>
@@ -39,164 +39,160 @@
 <tr class="odd">
 <td>V0.1</td>
 <td>12.03.2021</td>
-<td>Erste Version</td>
+<td>Initial Version</td>
 </tr>
 <tr class="even">
 <td>V0.2</td>
 <td>22.03.2021</td>
-<td><p>Screenshots angepasst</p>
-<p>Erläuterungen zur UMB Spezifikation</p></td>
+<td><p>Screenshots adjusted</p>
+<p>Explanations to UMB Specification</p></td>
 </tr>
 <tr class="odd">
 <td>V0.3</td>
 <td>19.04.2021</td>
-<td>64-bit Versionen der Bibliothek</td>
+<td>64-bit versions of the library</td>
 </tr>
 <tr class="even">
 <td>V0.4</td>
 <td>06.05.2021</td>
-<td>64-bit Version für ARM</td>
+<td>64-bit version for ARM</td>
 </tr>
 <tr class="odd">
 <td>V0.5</td>
 <td>20.05.2021</td>
-<td>Tabelle mit unterstützten UMB Befehlen</td>
+<td>Table of supported UMB commands</td>
 </tr>
 </tbody>
 </table>
 
-# Das UMB Protokoll
+# The UMB Protocol
 
-Das UMB-Protokoll ist ein von der Firma Lufft spezifiziertes,
-offengelegtes Binärprotokoll zur Konfiguration und Datenabfrage von
-Messgeräten.
+The UMB protocol is an open binary protocol specified by the Lufft
+company for the configuration and data retrieval of measuring devices.
 
-Die aktuelle Version der Spezifikation findet sich im Download-Bereich
-der Homepage [www.Lufft.de](http://www.Lufft.de). Das Dokument enthält
-alle Informationen zum Frame-Aufbau und zeitlichem Ablauf sowie eine
-detaillierte Beschreibung aller Befehle.
+The current version of the specification can be found in the download
+area of ​​the homepage [www.Lufft.de](http://www.Lufft.de). The document
+contains all information on the frame structure and timing as well as a
+detailed description of all commands.
 
-# Die UMB Bibliothek
+# The UMB Library
 
-Die Bibliothek ist in der Sprache C geschrieben und für Windows sowie
-für Linux verfügbar.
+The library is written in the C language and is available for Windows
+and Linux.
 
-Sie verwendet keine dynamische Speicherallokation.
+It does not use dynamic memory allocation.
 
-In der Bibliothek sind die in Tabelle 1 aufgeführten Befehle des UMB
-Protokolls implementiert.
+The commands of the UMB protocol listed in Table 1 are implemented in
+the library.
 
 <table>
 <colgroup>
 <col style="width: 14%" />
-<col style="width: 64%" />
-<col style="width: 21%" />
+<col style="width: 71%" />
+<col style="width: 14%" />
 </colgroup>
+<thead>
+<tr class="header">
+<th><strong>&lt;cmd&gt;</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Library V0.4</strong></th>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
-<td><strong>&lt;cmd&gt;</strong></td>
-<td><strong>Beschreibung</strong></td>
-<td><strong>Bibliothek V0.4</strong></td>
-</tr>
-<tr class="even">
 <td>20h</td>
-<td>Hard- und Softwareversion</td>
+<td>Hardware and software version</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>21h</td>
-<td>EEPROM auslesen</td>
+<td>Read out EEPROM</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>22h</td>
-<td>EEPROM programmieren</td>
+<td>Program EEPROM</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>23h</td>
-<td>Onlinedatenabfrage</td>
+<td>Online data request</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>24h</td>
-<td>Offlinedatenabfrage</td>
+<td>Offline data request</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>25h</td>
-<td>Reset / Default</td>
+<td>Reset / default</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>26h</td>
-<td>Statusabfrage</td>
+<td>Status request</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>27h</td>
-<td>Uhrzeit / Datum setzen</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>28h</td>
-<td>Uhrzeit / Datum auslesen</td>
+<td>Set time / date</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td>29h</td>
-<td>Testbefehl</td>
+<td>28h</td>
+<td>Read out time / date</td>
 <td></td>
 </tr>
 <tr class="even">
+<td>29h</td>
+<td>Test command</td>
+<td></td>
+</tr>
+<tr class="odd">
 <td>2Ah</td>
 <td>Monitor</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2Bh</td>
-<td>Protokollwechsel</td>
+<td>Protocol change</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2Ch</td>
-<td>letzte Fehlermeldung</td>
+<td>Last fault message</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>2Dh</td>
-<td>Geräteinformation</td>
-<td>()</td>
+<td>Device information</td>
+<td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>2Eh</td>
-<td>Reset mit Verzögerung</td>
+<td>Reset with delay</td>
 <td></td>
-</tr>
-<tr class="odd">
-<td><strong>&lt;cmd&gt;</strong></td>
-<td><strong>Beschreibung</strong></td>
-<td><strong>Bibliothek V0.4</strong></td>
 </tr>
 <tr class="even">
-<td>2Fh</td>
-<td>Onlinedatenabfrage mehrere Kanäle</td>
-<td></td>
+<td><strong>&lt;cmd&gt;</strong></td>
+<td><strong>Description</strong></td>
+<td><strong>Library V0.4</strong></td>
 </tr>
 <tr class="odd">
-<td></td>
-<td></td>
+<td>2Fh</td>
+<td>Multi-channel online data request</td>
 <td></td>
 </tr>
 <tr class="even">
 <td>30h</td>
-<td>neue Geräte-ID dauerhaft setzen<br />
+<td>Set new device ID permanently<br />
 (verc 1.0)</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td>30h</td>
-<td>neue Geräte-ID temporär setzen<br />
+<td>Set new device ID temporarily<br />
 (verc 1.1)</td>
 <td></td>
 </tr>
@@ -207,12 +203,12 @@ Protokolls implementiert.
 </tr>
 <tr class="odd">
 <td>37h</td>
-<td>Firmware übertragen</td>
+<td>Transfer Firmware</td>
 <td></td>
 </tr>
 <tr class="even">
 <td>38h</td>
-<td>Binärdaten übertragen</td>
+<td>Transfer Binary Data</td>
 <td></td>
 </tr>
 <tr class="odd">
@@ -222,12 +218,13 @@ Protokolls implementiert.
 </tr>
 <tr class="even">
 <td>40h – 7Fh</td>
-<td>reserviert für gerätespezifische Kommandos</td>
+<td>Reserved for device-specific commands<br />
+(see device description)</td>
 <td></td>
 </tr>
 <tr class="odd">
 <td>80h – 8Fh</td>
-<td>reserviert für Entwicklung</td>
+<td>Reserved for development</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -237,263 +234,250 @@ Protokolls implementiert.
 </tr>
 <tr class="odd">
 <td>F0h</td>
-<td>EEPROM programmieren mit PIN</td>
+<td>Program EEPROM with PIN</td>
 <td></td>
 </tr>
 </tbody>
 </table>
 
-Tabelle 1 Befehle des UMB Protokolls, die von der Bibliothek unterstützt
-werden
+Table Commands of the UMB protocol, which are implemented by the library
 
-Mit dem Befehl ‚Geräteinformation‘ (2Dh) kann eine Vielzahl von
-Geräte-Eigenschaften abgefragt werden. Davon werden bislang die in
-Tabelle 2 angegebenen Sub-Befehle unterstützt.
+A large number of device properties can be queried with the command
+'Device information' (2Dh). So far, the sub-commands specified in Table
+2 are supported.
 
-|             |                                                                  |                     |
-|-------------|------------------------------------------------------------------|---------------------|
-| **\<info>** | **Beschreibung**                                                 | **Bibliothek V0.4** |
-| 10h         | Gerätebezeichnung                                                |                     |
-| 11h         | Gerätebeschreibung                                               |                     |
-| 12h         | Hard- und Softwareversion                                        |                     |
-| 13h         | erweiterte Versions-Info                                         |                     |
-| 14h         | Größe des EEPROM                                                 |                     |
-| 15h         | Anzahl verfügbare Kanäle                                         |                     |
-| 16h         | Nummern der Kanäle                                               |                     |
-| 17h         | Anzahl der gerätespezifischen Versionsinformation-Slots auslesen |                     |
-| 18h         | Gerätespezifische Versionsinformationen auslesen                 |                     |
-| **\<info>** | **Beschreibung**                                                 | **Bibliothek V0.4** |
-| 20h         | Messgröße des Kanals                                             |                     |
-| 21h         | Messbereich des Kanals                                           |                     |
-| 22h         | Messeinheit des Kanals                                           |                     |
-| 23h         | Datentyp des Kanals                                              |                     |
-| 24h         | Messwerttyp                                                      |                     |
-|             |                                                                  |                     |
-| 30h         | komplette Kanalinfo                                              |                     |
-| 40h         | Anzahl der IP-Interfaces                                         |                     |
-| 41h         | IP-Information                                                   |                     |
+|             |                                                          |                  |
+|-------------|----------------------------------------------------------|------------------|
+| **\<info>** | **Description**                                          | **Library V0.4** |
+| 10h         | Device identification                                    |                  |
+| 11h         | Device description                                       |                  |
+| 12h         | Hardware and software version                            |                  |
+| 13h         | Extended version info                                    |                  |
+| 14h         | EEPROM size                                              |                  |
+| 15h         | No. of channels available                                |                  |
+| 16h         | Numbers of the channels                                  |                  |
+| 17h         | Read number of device specific version information slots |                  |
+| 18h         | Read device specific version information                 |                  |
+| **\<info>** | **Description**                                          | **Library V0.4** |
+| 20h         | Meas. variable of channel                                |                  |
+| 21h         | Meas. range of channel                                   |                  |
+| 22h         | Meas. unit of channel                                    |                  |
+| 23h         | Data type of channel                                     |                  |
+| 24h         | Meas. value type                                         |                  |
+|             |                                                          |                  |
+| 30h         | Complete channel info                                    |                  |
+| 40h         | Number of IP interfaces                                  |                  |
+| 41h         | IP Information                                           |                  |
 
-Tabelle 2 Sub-Befehle des Befehls ‚Geräteinformation‘, die von der
-Bibliothek unterstützt werden
+Table 2 Sub-commands of the ‘Device information’ command, which are
+supported by the library
 
-# Lieferumfang
+# Scope of Delivery
 
-Der Ordner „**lufft**“ enthält alle Dateien, die zur Verwendung der UMB
-Bibliothek benötigt werden:
+The folder "**lufft**" contains all files that are required to use the
+UMB library:
 
--   Die Software-Bibliotheken für Windows bzw. Linux / Linux auf ARM:
+-   Software libraries for Windows and Linux / Linux on ARM
 
 |            | **windows**             | **linux**             | **Linux / ARM**          |
 |------------|-------------------------|-----------------------|--------------------------|
 | **64 bit** | UmbControllerLib.lib    | libUmbController.a    | libUmbControllerArm_64.a |
 | **32 bit** | UmbControllerLib_32.lib | libUmbController_32.a | libUmbControllerArm_32.a |
 
--   Die Header-Dateien zur Verwendung der Bibliothek:
+-   The header files to use the library:
 
-> **UmbControllerLib.h**: Schnittstelle der Bibliothek
+> **UmbControllerLib.h**: Interface of the library
 >
-> **Umb_Types.h**: Allgemeine Typdefinitionen
+> **Umb_Types.h**: General type definitions
 
-Im Ordner „**src**“ findet man Dateien mit Beispielen für die Anbindung
-der Bibliothek an das eigene System:
+In the “**src**” folder you will find files with examples for connecting
+the library to your own system:
 
--   **UmbCtrlTest.cpp**: Testprogramm zur Veranschaulichung der
-    Funktionsweise
+-   **UmbCtrlTest.cpp**: Test program to illustrate how it works
 
--   **ComWin.c/.h**: Beispiel-Implementierung zur Anbindung unter
-    Windows
+-   **ComWin.c/.h**: Example implementation for connection under Windows
 
--   **ComLinux.c/.h**: Beispiel-Implementierung zur Anbindung unter
-    Linux
+-   **ComLinux.c/.h**: Example implementation for connection under Linux
 
-Der Ordner „**win**“ enthält nicht-Lufft-eigene Dateien, die im
-Testprogramm bzw. in den Beispiel-Implementierungen unter Windows
-verwendet werden. Hier sind die in den jeweiligen Quelldateien
-festgelegten Nutzungsbedingungen zu beachten.
+The "**win**" folder contains non-Lufft files that are used in the test
+program or in the example implementations under Windows. The terms of
+use specified in the respective source files must be observed here.
 
-Im Ordner „**examples**“ befindet sich ein Beispiel für die Installation
-der Bibliothek auf einem RaspberryPi. Weitere Beispiele sind geplant.
+The “**examples**” folder contains an example for installing the library
+on a RaspberryPi. Further examples are planned.
 
-# Inbetriebnahme
+# Commissioning
 
-Für die Verwendung der UMB Bibliothek müssen die beiden Header-Dateien
-Umb_Types.h und UmbControllerLib.h in das eigene Projekt kopiert werden.
+To use the UMB library, the two header files Umb_Types.h and
+UmbControllerLib.h must be copied into your own project.
 
-Abhängig vom verwendeten System (Windows, Linux, Linux auf ARM) wird die
-zugehörige Bibliothek benötigt, siehe auch Kapitel 3.
+Dependent on the system in use (Windows, Linux, Linux on ARM) the
+respective library is required, see also chapter 3.
 
-Die Installationsanleitung für einen RaspberryPi ist separat in der
-Datei README.txt im Verzeichnis /examples/RaspberryPi nachzulesen.
+The installation instructions for a RaspberryPi can be read separately
+in the README.txt file in the /examples/RaspberryPi directory.
 
-# Verwendung
+# Usage
 
-Der jeweils aktuelle Funktionsumfang der Bibliothek ist der
-Schnittstellendatei UmbControllerLib.h zu entnehmen.
+The current functional scope of the library can be found in the
+interface file UmbControllerLib.h.
 
-## System-Anbindung
+## System Connection
 
-Die Ansteuerung der seriellen Schnittstelle erfolgt über
-Funktionszeiger, die in der Struktur UMB_CTRL_COM_FUNCTION_T definiert
-sind, siehe Abbildung 1.
+The serial interface is controlled via function pointers that are
+defined in the UMB_CTRL_COM_FUNCTION_T structure, see Figure 1.
 
 <img src="./media/image2.png" style="width:6.29931in;height:2.73542in" />
 
-Abbildung 1 Struktur mit Funktionszeigern zur Ansteuerung der seriellen
-Schnittstelle
+Figure 1 Structure with function pointers for controlling the serial
+interface
 
-Die Funktionszeiger (\*pfnInit) und (\*pfnDeinit) sind optional und
-können z. B. verwendet werden, um die serielle Schnittstelle zu öffnen
-bzw. zu schließen. Wird dies aber bereits an anderer Stelle getan,
-können die beiden Funktionszeiger auch auf NULL gesetzt werden.
+The function pointers (\*pfnInit) and (\*pfnDeinit) are optional and
+e.g. can be used to open or close the serial interface. However, if this
+is already done elsewhere, the two function pointers can also be set to
+NULL.
 
-Alle anderen Funktionszeiger sind obligatorisch und müssen implementiert
-werden.
+All other function pointers are mandatory and must be implemented.
 
-Die Funktionszeiger (\*pfnUse) und (\*pfnUnuse) sind für den Schutz von
-Variablen oder Programmsegmenten durch Semaphoren vorgesehen. In den
-Beispiel-Implementationen führen diese Funktionen derzeit keinen aktiven
-Code aus.
+The function pointers (\*pfnUse) und (\*pfnUnuse) are intended for the
+protection of variables or code segments by semaphores. In the current
+example implentations these functions do not include active code.
 
-Das Handle \*pUserHandle kann benutzt werden, um anwenderspezifische
-Daten an die Callback-Funktionen durchzureichen. So werden in den
-Beispiel-Implementierungen comWin.cpp und ComLinux.cpp alle Daten, die
-im laufenden Betrieb benötigt werden, in einer Struktur COM_HANDLE_T
-zusammengefasst. \*pUserHandle zeigt auf die Adresse eines solchen
-Datensatzes, wodurch diese Daten dann in den Callback-Funktionen
-verfügbar sind. Abbildung 2 zeigt die Initialisierung eines
-\*pUserHandle, Abbildung 3 die spätere Anwendung.
+The handle \*pUserHandle can be used to pass user-specific data on to
+the callback functions. In the example implementations comWin.cpp and
+ComLinux.cpp, all data that are required during operation are summarized
+in a structure COM_HANDLE_T. \*pUserHandle points to the address of such
+a data record, which means that this data is then available in the
+callback functions. Figure 2 shows the initialization of a
+\*pUserHandle, Figure 3 the subsequent application.
 
 <img src="./media/image3.png" style="width:6.29931in;height:1.86806in" />
 
-Abbildung 2 Initialisierung eines \*pUserHandle
+Figure 2 Initialization of a \*pUserHandle
 
 <img src="./media/image4.png" style="width:6.10053in;height:2.80858in" />
 
-Abbildung 3 Verwendung eines \*pUserHandle
+Figure 3 Usage of a \*pUserHandle
 
-Die Module ComLinux.cpp/.h sowie ComWin.cpp/.h zeigen beispielhaft, wie
-die Zuweisung dieser Funktionszeiger umgesetzt werden kann:
+The modules ComLinux.cpp/.h and ComWin.cpp/.h show examples of how the
+assignment of these function pointers can be implemented:
 
-In ComLinux ist die Ansteuerung der seriellen Schnittstelle direkt
-implementiert, ComWin dagegen verwendet Fremdsoftware (SerialPort.h),
-für die nur noch die zur UMB Bibliothek kompatiblen Wrapper-Funktionen
-bereitgestellt werden, siehe auch Abbildung 4.
+The control of the serial interface is implemented directly in ComLinux,
+whereas ComWin uses third-party software (SerialPort.h) for which only
+the wrapper functions compatible with the UMB library are provided, see
+also Figure 4.
 
 <img src="./media/image5.png" style="width:10.90625in;height:4.80347in" />
 
-Abbildung 4 Implementierungsbeispiele zur Ansteuerung der seriellen
-Schnittstelle:  
-links: Beispiel für Linux, manuelle Implementierung  
-rechts: Beispiel für Windows, Verwendung bereits existierender
-Implementierung
+Figure 4 Implementation examples for controlling the serial interface:  
+left: Example for Linux, manual implementation  
+right: Example for Windows, usage of already existing implementation
 
-## Initialisierung
+## Initialization
 
-Die Initialisierung der UMB Bibliothek umfasst 3 Punkte:
+The initialization of the UMB library comprises 3 points:
 
--   Zuweisung der Funktionszeiger zur Ansteuerung der seriellen
-    Schnittstelle
+-   Allocation of the function pointers to control the serial interface
 
-> Der Übersicht halber erfolgt die Zuweisung der benötigten
-> Funktionszeiger am besten in einer eigenen, vom Anwender definierten
-> Funktion, siehe hierzu Abschnitt 5.1.
+> For the sake of clarity, it is best to assign the required function
+> pointers in a separate function defined by the user, see section 5.1.
 
--   Bereitstellung des Handles
+-   Provision of the handle
 
-> Die UMB Bibliothek verwendet keine dynamische Speicherallokation.
-> Daher muss der Anwender den Speicher für die verwendeten
-> Bibliotheks-Instanzen bereitstellen.
+> The UMB library does not use dynamic memory allocation. Therefore, the
+> user must provide the memory for the library instances used.
 >
-> Dieses Handle wird beim Aufruf aller weiteren Funktionen der UMB
-> Bibliothek benötigt.
+> This handle is required when calling all other functions of the UMB
+> library.
 
--   Aufruf der Initialisierungsfunktion der Bibliothek
+-   Calling the initialization function of the library
 
-> Der Initialisierungsfunktion UmbCtrl_Init() müssen das Handle sowie
-> die Variable, die die Funktionszeiger enthält, übergeben werden.
+> The handle and the variable that contains the function pointers, must
+> be given to the initialization function UmbCtrl_Init().
 
-Abbildung 5 zeigt exemplarisch die Initialisierungssequenz, Abbildung 6
-die Abfrage von Geräte-Namen und -Status.
+Figure 5 shows an example of the initialization sequence, Figure 6 a
+query of the device name and the device status.
 
 <img src="./media/image6.png" style="width:5.3588in;height:3.55031in" />
 
-Abbildung 5 Initialisierung der UMB-Bibliothek
+Figure 5 Initialization of the UMB library
 
 <img src="./media/image7.png" style="width:4.66707in;height:4.63373in" />
 
-Abbildung 6 Abfrage von Geräte-Name und Geräte-Status
+Figure 6 Query of device name and device status
 
-## Testprogramm
+## Test Programm
 
-Das Testprogramm in UmbCtrlTest.cpp zeigt beispielhaft die Verwendung
-der UMB Controller Bibliothek. Vor Verwendung des Testprogramms müssen
-alle mit ‚TODO‘ gekennzeichneten Stellen im main()-Programm an das
-eigene Testsystem angepasst werden . Diese sind
+The test program in UmbCtrlTest.cpp shows an example of how to use the
+UMB Controller library. Before using the test program, all places marked
+with 'TODO' in the main() program must be adapted to your own test
+system. These are
 
--   Präprozessor-Definition \_USE_NCURSES, um die graphische
-    Fortschritts-Anzeige bei der Update-Funktion unter Linux nutzen zu
-    können (Näheres siehe unten):
+-   Preprocessor definition \_USE_NCURSES, in order to be able to use
+    the graphical progress display for the update function under Linux
+    (for more details see below)
 
 > #define \_USE_NCURSES
 
--   Verwendete serielle Schnittstelle, z. B.
+-   Used serial interface, e. g.
 
 > char serialIf\[\] = { "3" };
 >
-> Hinweis:
+> Note:
 >
-> Unter Linux muss hier der gesamte Pfad der seriellen Schnittstelle
-> angegeben werden, z. B. char serialIf\[\] = { "/dev/tty03" };
+> Under Linux, the entire path of the serial interface must be specified
+> here, e.g.
+>
+> char serialIf\[\] = { "/dev/tty03" };
 
--   Baudrate der seriellen Schnittstelle, z. B.
+-   Baud rate of the serial interface, e. g.
 
 > comConfig.baudrate = 19200;
 
--   UMB-Adresse des UMB-Gerätes, mit dem kommuniziert werden soll, z. B.
+-   UMB address of the UMB device to be used for communication, e.g.
 
 > umbAddress.deviceId = 0x01; // device id: 1
 >
 > umbAddress.classId = 0x70; // class id: 7 = weather station
 
--   Pfad und Name der Firmware Datei, z. B.
+-   Path and name of the firmware file, e.g.
 
 > char fileName\[\] = {
 > "C:\\\\Projekte\\\\UmbController\\\\WS100_update.bin" };
 
-Die auskommentierten Funktionen (siehe Abbildung 7) werden am besten
-einzeln und nach Bedarf in das Testprogramm übernommen, um mit der
-jeweiligen Funktionalität vertraut zu werden.
+The functions that have been commented out (see Figure 7) are best
+transferred into the test program individually and as required in order
+to become familiar with the respective functionality.
 
 <img src="./media/image8.png" style="width:2.94192in;height:1.31678in" />
 
-Abbildung 7 Beispielfunktionen zur Verwendung der UMB-Bibliothek
+Figure 7 Example functions for using the UMB library
 
-**Zur Präprozessor-Definition \_USE_NCURSES**
+**About the preprocessor definition_USE_NCURSES**
 
-Die Beispielimplementierung firmwareUpdate() verwendet eine grafische
-Darstellung des Update-Fortschritts, die unter Linux das Paket ncurses
-voraussetzt. Dieses muss z. B. auf einem RaspberryPi manuell installiert
-werden, da es nicht über raspbian-stretch-lite vorinstalliert ist.
+The example implementation firmwareUpdate() uses a graphical
+representation of the update progress, which requires the ncurses
+package under Linux. This must be installed manually e. g. on a
+RaspberryPi, since it is not preinstalled via raspbian-stretch-lite.
 
-Eine Anleitung hierfür findet sich in der Datei README.txt im
-Verzeichnis /examples/RaspberryPi.
+Instructions for this can be found in the README.txt file in the
+/examples/RaspberryPi directory.
 
-Soll diese Fortschrittsanzeige genutzt werden, muss man bei
-installiertem Paket ncurses die Präprozessor-Definition \_USE_NCURSES
-setzen. Ist diese Anweisung dagegen auskommentiert, wird statt der
-graphischen eine einfache Fortschrittsanzeige verwendet, die ohne
-weitere Pakete auskommt.
+If this progress display is to be used, the preprocessor definition
+\_USE_NCURSES must be set after the ncurses package is installed. If, on
+the other hand, this instruction is commented out, a simple progress
+display is used instead of the graphical one, which does not require any
+further packages.
 
-# Hinweise zum Firmware-Update
+# Notes on Firmware Update
 
-Ältere UMB-Geräte wie WSx00, Ventus, Anacon etc. verwenden eine
-Update-Datei im .mot-Format. Diese können nicht über das UMB-Protokoll,
-sondern ausschließlich über Hexload auf ein Gerät übertragen werden.
+Older UMB devices such as WSx00, Ventus, Anacon etc. use an update file
+in .mot format. These cannot be transferred to a device via the UMB
+protocol, but only via Hexload.
 
-Für die neue Generation der UMB-Geräte wie z. B. MARWIS, WS1000, WS100,
-SHM31 u. a. wurde daher das Datei-Format .bin definiert, das auch ein
-Firmware-Update über UMB ermöglicht.
+Therefore, for the new generation of UMB devices such as MARWIS, WS1000,
+WS100, SHM31 and others the .bin file format was defined, which also
+enables a firmware update via UMB.
 
--   Firmware-Updates über das UMB-Protokoll sind nur für die UMB-Geräte
-    möglich, deren Update-Datei im .bin-Format vorliegt.
-
+-   Firmware updates via the UMB protocol are only possible for UMB
+    devices whose update file is in .bin format
