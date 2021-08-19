@@ -1,13 +1,13 @@
 
-# The UMB Controller Library
+# **The UMB Controller Library**
 
 The UMB controller library implements a UMB controller, sending requests to UMB devices and processing their responses.
 Some sample code is provided to help you integrating the library into your system.
 
 The library is written in the C language and available as a static library for the following operating systems / architectures:
 
-|            | **windows**             | **linux**             | **Linux / ARM**          |
-|------------|-------------------------|-----------------------|--------------------------|
+|            | **Windows**             | **Linux**             | **Linux / ARM**          |
+| ---------- | ----------------------- | --------------------- | ------------------------ |
 | **64 bit** | UmbControllerLib.lib    | libUmbController.a    | libUmbControllerArm_64.a |
 | **32 bit** | UmbControllerLib_32.lib | libUmbController_32.a | libUmbControllerArm_32.a |
 
@@ -15,7 +15,7 @@ It does not use dynamic memory allocation.
 
 For a detailed description see the manual in the docs folder.
 
-License.md contains the license agreement.
+LICENSE.md contains the license agreement.
 
 Please note, that this is a beta version and not all of the commands specified by the UMB protocol are implemented yet.
 

@@ -69,7 +69,14 @@ int main(int argc, char* argv[])
 
     // Initialization
     // TODO: Adjust to used serial interface
-    char serialIf[] = { "3" };
+#if __linux__
+    // Use full filename
+    char serialIf[] = "/dev/ttyS0";
+#else
+    // Use only port number
+    char serialIf[] = "1";
+#endif
+
     COM_CONFIG_T comConfig;
     UMB_CTRL_COM_FUNCTION_T * pUmbCtrlComFunction;
 
@@ -85,7 +92,7 @@ int main(int argc, char* argv[])
     UMB_ADDRESS_T umbAddress;
     // TODO: Adjust to used class id / device id
     umbAddress.deviceId = 0x01; // device id: 1
-    umbAddress.classId = 0xA0;  // class id: 7 = weather station
+    umbAddress.classId = 0x70;  // class id: 7 = weather station
 
     uint8 name[41] = { 0 };
     status = UmbCtrl_GetDevName(pUmbCtrl, umbAddress, name);
@@ -113,7 +120,7 @@ int main(int argc, char* argv[])
 
     //writeMemory(pUmbCtrl, umbAddress);
     //getChannelInfo(pUmbCtrl, umbAddress);
-    getChannelData(pUmbCtrl, umbAddress);
+    //getChannelData(pUmbCtrl, umbAddress);
     //firmwareUpdate(pUmbCtrl, umbAddress);
 
     // deinitialization
