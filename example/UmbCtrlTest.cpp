@@ -37,8 +37,14 @@
 #endif
 
 #include <string>
+#include <malloc.h>
 
 #include "UmbControllerLib.h"
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
 
 typedef struct
 {
@@ -424,3 +430,7 @@ static void* firmwareUpdate_thread(void* arg)
     pthread_exit(NULL);
     return NULL;
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif

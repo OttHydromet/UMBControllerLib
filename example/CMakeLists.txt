@@ -4,6 +4,9 @@ project(UmbControllerTest)
 set(SOURCES
     UmbCtrlTest.cpp)
 
+set(INCLUDES
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
 if(WIN32)
     set(SOURCES ${SOURCES}
         ComWin.cpp
