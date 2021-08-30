@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(UmbControllerLib VERSION 0.4.0)
 
-option(ENABLE_EXAMPLES          "Build examples" ON)
+option(ENABLE_EXAMPLES "Build examples" ON)
 
 set(LIB_NAME ${PROJECT_NAME})
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
