@@ -4,14 +4,10 @@ LUFFT UMB controller library
 Version 0.4 (2021-05-12)
 - new library version V0.4
 - all known issues of library version V0.3 are solved
-- some fixes in demo sources (related to firmware updates and timeout handling of serial interface control)
-- 64-bit library for ARM provided (Ubuntu)
+- some fixes in demo sources (related to firmware update and timeout handling of serial interface control)
+- also 64-bit pthread library for windows demo program provided
+- also 64-bit library for ARM provided (Ubuntu)
 - new manuals (english and german) V0.4
-
-Known issues:
-- Windows, 64-bit:
-  The test function of the update functionality [firmwareUpdate() in UmbCtrlTest..cpp] needs a 64-bit variant of the pthread library.
-  In the UMB package this library is only provided in the 32-bit variant by now, an adequate 64-bit variant must be made available by the user.
 
 ----------
 Version 0.3 (2021-04-19)
@@ -23,6 +19,7 @@ Version 0.3 (2021-04-19)
 
 Known issues:
 - firmware update of UMB devices does not work
+- timeout handling in demo sources was not due to UMB specification
 
 ----------
 Version 0.2 (2021-03-30)

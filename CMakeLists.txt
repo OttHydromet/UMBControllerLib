@@ -4,7 +4,8 @@ project(UmbControllerLib VERSION 0.4.0)
 option(ENABLE_EXAMPLES "Build examples" ON)
 
 set(LIB_NAME ${PROJECT_NAME})
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+
+if((CMAKE_SYSTEM_PROCESSOR MATCHES "arm*") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64"))
     # Raspberry Pi / ARM
     if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(LIB_NAME lib${LIB_NAME}Arm_32)
