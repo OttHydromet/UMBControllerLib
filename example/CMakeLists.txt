@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.1)
+if(WIN32)
+    cmake_minimum_required(VERSION 3.21)
+else()
+    cmake_minimum_required(VERSION 3.1)
+endif()
 project(UmbControllerTest)
 
 set(SOURCES
@@ -37,4 +41,11 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     message("Build using GNU compiler")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+endif()
+
+if(WIN32)
+    # copy required DLLs to output folder
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>
+        $<TARGET_FILE_DIR:${PROJECT_NAME}> COMMAND_EXPAND_LISTS)
 endif()

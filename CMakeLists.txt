@@ -25,13 +25,13 @@ endif()
 
 
 if(UNIX)
-    set(LIB_NAME ${LIB_NAME}.a)
+    set(LIB_NAME ${LIB_NAME}.so)
 else()
-    set(LIB_NAME ${LIB_NAME}.lib)
+    set(LIB_NAME ${LIB_NAME}.dll)
 endif()
 
 
-add_library(${PROJECT_NAME} STATIC IMPORTED)
+add_library(${PROJECT_NAME} SHARED IMPORTED)
 set_property(TARGET ${PROJECT_NAME} PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/${LIB_NAME})
 target_include_directories(${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
