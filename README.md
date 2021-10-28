@@ -8,8 +8,8 @@ The library is written in the C language and available as a dynamic library for 
 
 |            | **Windows**             | **Linux**              | **Linux / ARM**             |
 | ---------- | ----------------------- | ---------------------- | --------------------------- |
-| **64 bit** | UmbControllerLib.dll    | libUmbControllerLib.so | libUmbControllerLibArm_64.a |
-| **32 bit** | UmbControllerLib_32.dll | libUmbControllerLib.so | libUmbControllerLibArm_32.a |
+| **64 bit** | UmbControllerLib.dll<br>UmbControllerLib.lib  | libUmbControllerLib.so<br>libUmbControllerLib.so.0.4 | libUmbControllerLibArm_64.so<br>libUmbControllerLibArm_64.so.0.4 |
+| **32 bit** | UmbControllerLib_32.dll<br>UmbControllerLib_32.lib  | libUmbControllerLib_32.so<br>libUmbControllerLib_32.so.0.4 | libUmbControllerLibArm_32.so<br>libUmbControllerLibArm_32.so.0.4 |
 
 The library itself does not use dynamic memory allocation. For a detailed description see the manual in the docs folder.
 
@@ -19,10 +19,10 @@ Please note, that this is a beta version and not all of the commands specified b
 
 # Usage
 
-A [CMakeLists](CMakeLists.txt) file is provided for easy integration into existing projects. It also includes an example project that may be used as a basis for new projects. To compile the example run the following commands:
+A [CMakeLists](CMakeLists.txt) file is provided foreasy integration into existing projects. It also includes an example project that may be used as a basis for new projects. To compile the example run the following commands:
 
 ```Bash
-cmake -B build
+cmake -B build \ 
 cmake --build build
 ```
 
