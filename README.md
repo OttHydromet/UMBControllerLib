@@ -6,10 +6,10 @@ Some sample code is provided to help you integrating the library into your syste
 
 The library is written in the C language and available as a dynamic library for the following operating systems / architectures:
 
-|            | **Windows**             | **Linux**              | **Linux / ARM**             |
-| ---------- | ----------------------- | ---------------------- | --------------------------- |
-| **64 bit** | UmbControllerLib.dll<br>UmbControllerLib.lib  | libUmbControllerLib.so<br>libUmbControllerLib.so.0.4 | libUmbControllerLibArm_64.so<br>libUmbControllerLibArm_64.so.0.4 |
-| **32 bit** | UmbControllerLib_32.dll<br>UmbControllerLib_32.lib  | libUmbControllerLib_32.so<br>libUmbControllerLib_32.so.0.4 | libUmbControllerLibArm_32.so<br>libUmbControllerLibArm_32.so.0.4 |
+|            | **Windows**                                        | **Linux**                 | **Linux / ARM**              |
+| ---------- | -------------------------------------------------- | ------------------------- | ---------------------------- |
+| **64 bit** | UmbControllerLib.dll<br>UmbControllerLib.lib       | libUmbControllerLib.so    | libUmbControllerLibArm_64.so |
+| **32 bit** | UmbControllerLib_32.dll<br>UmbControllerLib_32.lib | libUmbControllerLib_32.so | libUmbControllerLibArm_32.so |
 
 The library itself does not use dynamic memory allocation. For a detailed description see the manual in the docs folder.
 
