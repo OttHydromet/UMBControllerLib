@@ -52,6 +52,7 @@ extern "C" {
 
  /* Typedefs for datatypes */
 typedef uint8_t                 boolean;
+typedef uint8_t                 str8;
 typedef int8_t                  sint8;
 typedef uint8_t                 uint8;
 typedef int16_t                 sint16;

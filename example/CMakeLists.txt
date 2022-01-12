@@ -29,7 +29,14 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE UmbControllerLib)
-if(UNIX)
+if(WIN32)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+		set(PTHREAD_LIB ${CMAKE_CURRENT_SOURCE_DIR}/win/pthread/pthreadVC3-w32)
+	else()
+		set(PTHREAD_LIB ${CMAKE_CURRENT_SOURCE_DIR}/win/pthread/pthreadVC3-w64)
+	endif()
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${PTHREAD_LIB}.lib)
+elseif(UNIX)
     target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
 endif()
 
@@ -46,6 +53,6 @@ endif()
 if(WIN32)
     # copy required DLLs to output folder
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> ${PTHREAD_LIB}.dll
         $<TARGET_FILE_DIR:${PROJECT_NAME}> COMMAND_EXPAND_LISTS)
 endif()

@@ -38,9 +38,9 @@
 #ifndef UMB_CONTROLLER_LIB_H
 #define UMB_CONTROLLER_LIB_H
 
-////////////////////////////////////////////////////////////////////////////////
-//                                 includes                                   //
-////////////////////////////////////////////////////////////////////////////////
+ ////////////////////////////////////////////////////////////////////////////////
+ //                                 includes                                   //
+ ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
 
@@ -53,6 +53,7 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 //                    type, macro and constant definitions                    //
 ////////////////////////////////////////////////////////////////////////////////
+
 
 #if WIN32 && defined DLL_EXPORT
 #define DECL_DLL __declspec(dllexport)
@@ -123,8 +124,8 @@ typedef struct
 typedef struct
 {
 	uint16 channel;
-	uint8 name[20+1];
-	uint8 unitName[15+1];
+	str8 name[20+1];
+	str8 unitName[15+1];
 	MEAS_VALUE_TYPE_T valType;
 	MEAS_DATA_TYPE_T dataType;
 	MEAS_VAL_T min;
@@ -198,7 +199,7 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetDevStatus(UMB_CTRL_T* const pHandle, const
  * @return          UMB_CTRL_STATUS_T
  ******************************************************************************/
 DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetDevName(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress,
-										uint8* const pDeviceName);
+										str8 pDeviceName[41]);
 
 /***************************************************************************//**
  * Get the number of UMB channels
@@ -224,7 +225,7 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetNumChannels(UMB_CTRL_T* const pHandle, con
  * @return          UMB_CTRL_STATUS_T
  ******************************************************************************/
 DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetChannels(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint8 block,
-										uint8* const pNumChannels, uint16* const pChannels);
+										uint8* const pNumChannels, uint16 pChannels[100]);
 
 /***************************************************************************//**
  * Get the number of UMB channels
@@ -248,8 +249,8 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetChannelInfo(UMB_CTRL_T* const pHandle, con
  * @param[out]      *pMeasData      pointer to an array, which contains numChannels measurement data
  * @return          UMB_CTRL_STATUS_T
  ******************************************************************************/
-DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetMultiChannelData(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint8 numChannels, const uint16* const pChannel,
-										MEAS_CHANNEL_VALUE_T* const pMeasData);
+DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetMultiChannelData(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint8 numChannels, const uint16 pChannel[],
+										MEAS_CHANNEL_VALUE_T pMeasData[]);
 
 /***************************************************************************//**
  * Read data out of the memory of a device
@@ -263,7 +264,7 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_GetMultiChannelData(UMB_CTRL_T* const pHandle
  * @return          UMB_CTRL_STATUS_T
  ******************************************************************************/
 DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_ReadMem(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint16 start, const uint8 length,
-										uint8* const pData);
+										uint8 pData[]);
 
 /***************************************************************************//**
  * Write data into the memory of a device
@@ -276,7 +277,7 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_ReadMem(UMB_CTRL_T* const pHandle, const UMB_
  *                                  must point to a memory area of at least 'length' bytes
  * @return          UMB_CTRL_STATUS_T
  ******************************************************************************/
-DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_WriteMem(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint16 start, const uint8 length, const uint8* const pData);
+DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_WriteMem(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint16 start, const uint8 length, const uint8 pData[]);
 
 /***************************************************************************//**
  * Reset a device
@@ -299,7 +300,7 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_Reset(UMB_CTRL_T* const pHandle, const UMB_AD
  * @param[out]      *pUpdateProgress update status
  * @return          UMB_CTRL_STATUS_T
  ******************************************************************************/
-DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_UpdateFirmware(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, FILE* const fp, const boolean reboot, volatile uint8* const pUpdateProgress);
+DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_UpdateFirmware(UMB_CTRL_T* const pHandle, const UMB_ADDRESS_T toaddress, const uint8 fileName[], const boolean reboot, volatile uint8* const pUpdateProgress);
 
 /***************************************************************************//**
  * Get information of a firmware file
@@ -308,7 +309,7 @@ DECL_DLL UMB_CTRL_STATUS_T UmbCtrl_UpdateFirmware(UMB_CTRL_T* const pHandle, con
  * @param[out]      *pFileInfo      pointer to the file information
  * @return          ERROR_STATUS_T
  ******************************************************************************/
-DECL_DLL UMB_CTRL_LIB_STATUS_T UmbCtrl_GetFwFileInfo(FILE* const fp, UMB_CTRL_FW_FILE_T* const pFileInfo);
+DECL_DLL UMB_CTRL_LIB_STATUS_T UmbCtrl_GetFwFileInfo(const uint8 fileName[], UMB_CTRL_FW_FILE_T* const pFileInfo);
 
 
 #ifdef __cplusplus

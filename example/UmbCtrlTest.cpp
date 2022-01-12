@@ -50,7 +50,7 @@ typedef struct
 {
     UMB_CTRL_T *pUmbCtrl;
     UMB_ADDRESS_T address;
-    FILE* fp;
+    uint8* fileName;
     bool reboot;
     UMB_CTRL_STATUS_T threadReturn;
 } FW_UPDATE_T;
@@ -59,7 +59,7 @@ static void writeMemory(UMB_CTRL_T* pUmbCtrl, UMB_ADDRESS_T umbAddress);
 static void getChannelInfo(UMB_CTRL_T* pUmbCtrl, UMB_ADDRESS_T umbAddress);
 static void getChannelData(UMB_CTRL_T* pUmbCtrl, UMB_ADDRESS_T umbAddress);
 static void firmwareUpdate(UMB_CTRL_T* pUmbCtrl, UMB_ADDRESS_T umbAddress);
-static void printFileInfo(char* fileName, UMB_CTRL_FW_FILE_T* fileInfo);
+static void printFileInfo(const uint8 fileName[], UMB_CTRL_FW_FILE_T* fileInfo);
 static void doUpdateAnimation(pthread_t updateThread);
 static void spinBeachBall(char* beachBall);
 static void* firmwareUpdate_thread(void* arg);
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     umbAddress.deviceId = 0x01; // device id: 1
     umbAddress.classId = 0x70;  // class id: 7 = weather station
 
-    uint8 name[41] = { 0 };
+    str8 name[41] = { 0 };
     status = UmbCtrl_GetDevName(pUmbCtrl, umbAddress, name);
     if (status.global == UMB_CTRL_STATUS_OK)
     {
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
     //writeMemory(pUmbCtrl, umbAddress);
     //getChannelInfo(pUmbCtrl, umbAddress);
     //getChannelData(pUmbCtrl, umbAddress);
-    //firmwareUpdate(pUmbCtrl, umbAddress);
+    firmwareUpdate(pUmbCtrl, umbAddress);
 
     // deinitialization
     UmbCtrl_Deinit(pUmbCtrl);
@@ -246,58 +246,49 @@ static void firmwareUpdate(UMB_CTRL_T* pUmbCtrl, UMB_ADDRESS_T umbAddress)
     pthread_t updateThread;
     FW_UPDATE_T fwUpdate;
     // TODO: Adjust path and name of the used firmware file (only .bin format is supported)
-    char fileName[] = { "C:\\Projekte\\UmbController\\MARWIS_Release_V46_RC1.bin" };
+    uint8 fileName[] = { "C:\\Projekte\\UmbController\\MARWIS_Release_V46_RC1.bin" };
     fwUpdate.pUmbCtrl = pUmbCtrl;
     fwUpdate.address = umbAddress;
+    fwUpdate.fileName = fileName;
     fwUpdate.reboot = true;
 
-    fwUpdate.fp = fopen(fileName, "rb");
-
-   if (fwUpdate.fp != NULL)
+    UMB_CTRL_FW_FILE_T fileInfo;
+    UmbCtrl_GetFwFileInfo(fileName, &fileInfo);
+    printFileInfo(fileName, &fileInfo);
+    printf("Press ENTER to continue!\n");
+    char c = getchar();
+    if ((c == '\n') || (c == '\r'))
     {
-        UMB_CTRL_FW_FILE_T fileInfo;
-        UmbCtrl_GetFwFileInfo(fwUpdate.fp, &fileInfo);
-        printFileInfo(fileName, &fileInfo);
-        printf("Press ENTER to continue!\n");
-        char c = getchar();
-        if ((c == '\n') || (c == '\r'))
-        {
-            updateRunning = true;
-            pthread_create(&updateThread, NULL, firmwareUpdate_thread, &fwUpdate);
-            doUpdateAnimation(updateThread);
+        updateRunning = true;
+        pthread_create(&updateThread, NULL, firmwareUpdate_thread, &fwUpdate);
+        doUpdateAnimation(updateThread);
 
-            printf("\n\n");
-            UMB_CTRL_STATUS_T* pStatus = &fwUpdate.threadReturn;
-            if (pStatus->global != UMB_CTRL_STATUS_OK)
+        printf("\n\n");
+        UMB_CTRL_STATUS_T* pStatus = &fwUpdate.threadReturn;
+        if (pStatus->global != UMB_CTRL_STATUS_OK)
+        {
+            switch (pStatus->detail.library)
             {
-                switch (pStatus->detail.library)
-                {
-                case UMB_CTRL_LIB_STATUS_TIMEOUT:
-                    printf("Timeout ERROR\n");
-                    break;
-                case UMB_CTRL_LIB_STATUS_PARSER:
-                    printf("Parser ERROR\n");
-                    break;
-                case UMB_CTRL_LIB_STATUS_OK:
-                default:
-                    printf("Error: 0x%04x\n", pStatus->global);
-                    break;
-                }
-            }
-            else
-            {
-                printf("Update finished!\n");
+            case UMB_CTRL_LIB_STATUS_TIMEOUT:
+                printf("Timeout ERROR\n");
+                break;
+            case UMB_CTRL_LIB_STATUS_PARSER:
+                printf("Parser ERROR\n");
+                break;
+            case UMB_CTRL_LIB_STATUS_OK:
+            default:
+                printf("Error: 0x%04x\n", pStatus->global);
+                break;
             }
         }
-        fclose(fwUpdate.fp);
-    }
-    else
-    {
-        printf("No such file!\n");
+        else
+        {
+            printf("Update finished!\n");
+        }
     }
 }
 
-static void printFileInfo(char* fileName, UMB_CTRL_FW_FILE_T* fileInfo)
+static void printFileInfo(const uint8 fileName[], UMB_CTRL_FW_FILE_T* fileInfo)
 {
     printf("%s\n", fileName);
     printf("Project:\t%u\n", fileInfo->project);
@@ -424,7 +415,7 @@ static void* firmwareUpdate_thread(void* arg)
 
     // UmbCtrl_UpdateFirmware() returns as soon as the update is completed.
     // Depending on file size and baudrate this can last up to 1 - 2 min!
-    fw_arg->threadReturn = UmbCtrl_UpdateFirmware(fw_arg->pUmbCtrl, fw_arg->address, fw_arg->fp, fw_arg->reboot, &updateProgress);
+    fw_arg->threadReturn = UmbCtrl_UpdateFirmware(fw_arg->pUmbCtrl, fw_arg->address, fw_arg->fileName, fw_arg->reboot, &updateProgress);
     updateRunning = false;
 
     pthread_exit(NULL);
